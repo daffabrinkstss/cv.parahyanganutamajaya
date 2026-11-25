@@ -186,6 +186,20 @@ header{transition:box-shadow .3s}header.s{box-shadow:0 10px 28px -18px rgba(0,0,
 .js .hb{animation:rise 1s cubic-bezier(.2,.7,.2,1) 2.1s both}
 @media(max-width:420px){.logo{font-size:.88rem}}
 
+/* logo: lebih cerah + kilau logam yang menyapu permukaan */
+.rl,.hb{position:relative;filter:brightness(1.14) contrast(1.06) saturate(1.08) drop-shadow(0 6px 12px rgba(31,35,39,.22))}
+.rl::after,.hb::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.95) 50%,transparent 60%) no-repeat;
+  background-size:250% 100%;
+  -webkit-mask:var(--logo) center/contain no-repeat;
+  mask:var(--logo) center/contain no-repeat;
+  animation:kilau 4.8s ease-in-out 1.2s infinite backwards}
+#splash .m::after{animation-delay:.9s}
+.hb::after{animation-delay:2.6s}
+@keyframes kilau{0%{background-position:150% 0}40%,100%{background-position:-50% 0}}
+.reduce-motion .rl::after,.reduce-motion .hb::after{animation:none;display:none}
+@media(prefers-reduced-motion:reduce){.rl::after,.hb::after{animation:none;display:none}}
+
 /* Splash intro: tetap bergerak di ponsel/tablet, termasuk saat Reduce Motion aktif */
 #splash .m{animation:pop .85s cubic-bezier(.2,.8,.2,1) .12s both}
 #splash b{animation:rise .8s cubic-bezier(.2,.7,.2,1) .38s both}
