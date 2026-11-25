@@ -156,6 +156,7 @@ footer{background:var(--alt);border-top:1px solid var(--line);color:var(--dkm);p
 /* entrance */
 #splash{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);place-items:center;text-align:center;padding:24px;animation:out .85s cubic-bezier(.7,0,.2,1) 2s forwards}
 .js #splash{display:grid}
+.js #splash.is-done{display:none!important}
 #splash b{display:block;color:var(--ink);font-size:clamp(1.3rem,4vw,1.9rem);font-weight:800;letter-spacing:-.02em;animation:rise .8s cubic-bezier(.2,.7,.2,1) .5s both}
 #splash small{display:block;color:var(--muted);margin-top:6px;font-size:.92rem;animation:rise .8s cubic-bezier(.2,.7,.2,1) .65s both}
 #splash i{display:block;width:150px;height:3px;background:var(--line);margin:28px auto 0;border-radius:3px;overflow:hidden;position:relative}
@@ -184,6 +185,13 @@ header{transition:box-shadow .3s}header.s{box-shadow:0 10px 28px -18px rgba(0,0,
 .hb{width:clamp(150px,18vw,210px);aspect-ratio:480/419;background:var(--logo) left center/contain no-repeat;margin:0 0 24px}
 .js .hb{animation:rise 1s cubic-bezier(.2,.7,.2,1) 2.1s both}
 @media(max-width:420px){.logo{font-size:.88rem}}
+
+/* Splash intro: tetap bergerak di ponsel/tablet, termasuk saat Reduce Motion aktif */
+#splash .m{animation:pop .85s cubic-bezier(.2,.8,.2,1) .12s both}
+#splash b{animation:rise .8s cubic-bezier(.2,.7,.2,1) .38s both}
+#splash small{animation:rise .8s cubic-bezier(.2,.7,.2,1) .52s both}
+#splash i::after{animation:ld 1.5s cubic-bezier(.4,0,.2,1) .25s forwards}
+
 
 ::selection{background:var(--y);color:#fff}
 html{scrollbar-width:thin;scrollbar-color:#c9cfd6 #fff}
@@ -236,7 +244,12 @@ details[open] p{animation:fade .4s}
 #cl li small{color:var(--muted);font-weight:500}
 #cl li.on{background:var(--y);color:#fff}#cl li.on small{color:#ffe1e0}
 .cb p{margin:0;padding:10px 20px;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted)}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}#bar{display:none}*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  #bar{display:none}
+  *:not(#splash):not(#splash *){animation:none!important;transition:none!important}
+  .js .rv{opacity:1;transform:none}
+}
 
 
 /* mobile refinement */
@@ -342,10 +355,34 @@ details[open] p{animation:fade .4s}
 }
 
 </style>
-<script>if(!matchMedia('(prefers-reduced-motion:reduce)').matches)document.documentElement.classList.add('js')</script>
+<script>
+(function(){
+  var root=document.documentElement;
+  root.classList.add('js');
+  try {
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      root.classList.add('reduce-motion');
+    }
+  } catch(e) {}
+})();
+</script>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div><div class="m rl"></div><b>CV. Parahyangan Utama Jaya</b><small>Distributor Chemical Beton, Precast &amp; Kontraktor</small><i></i></div></div>
+<script>
+(function(){
+  var splash=document.getElementById('splash');
+  if(!splash) return;
+  var reduced=false;
+  try {
+    reduced=!!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch(e) {}
+  // Intro singkat dalam mode normal; mode reduce menampilkan logo statis.
+  window.setTimeout(function(){
+    splash.classList.add('is-done');
+  }, reduced ? 1000 : 2900);
+})();
+</script>
 <header><div class="w">
   <a class="logo" href="#top" aria-label="Parahyangan Utama Jaya"><i class="rl"></i>Parahyangan Utama Jaya</a>
   <nav aria-label="Menu utama"><a href="#layanan">Layanan</a><a href="#produk">Produk</a><a href="#alur">Cara kerja</a><a href="#faq">FAQ</a><a href="#kontak">Kontak</a></nav>
@@ -374,7 +411,7 @@ details[open] p{animation:fade .4s}
 
 <section class="stats"><div class="w">
   <div class="st"><b data-n="5">0</b><span>bidang usaha terpadu</span></div>
-  <div class="st"><b data-n="6">0</b><span>lini produk Fosroc</span></div>
+  <div class="st"><b data-n="8">0</b><span>lini produk Fosroc dan GCP</span></div>
   <div class="st"><b data-n="2">0</b><span>ukuran kemasan: pail 20 L dan drum 210 L</span></div>
   <div class="st"><b data-n="12" data-s=" bln">0</b><span>umur simpan Reebol di kemasan asli</span></div>
 </div></section>
@@ -391,7 +428,7 @@ details[open] p{animation:fade .4s}
       <button role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1">Produk interior</button>
     </div>
     <div class="tp">
-      <div role="tabpanel" id="p0" aria-labelledby="t0" class="on"><h3>Distributor chemical beton</h3><p>Material kimia untuk campuran beton dan perawatan bekisting, untuk pabrik beton, kontraktor, dan proyek bangunan.</p><ul><li>Admixture: Conplast, Auramix, Auracast, Structuro</li><li>Mould release agent: Reebol dan Reebol Emulsion</li><li>Datasheet teknis dan pendampingan penggunaan</li></ul><a class="btn" href="#kontak">Tanya produk</a></div>
+      <div role="tabpanel" id="p0" aria-labelledby="t0" class="on"><h3>Distributor chemical beton</h3><p>Material kimia untuk campuran beton dan perawatan bekisting, untuk pabrik beton, kontraktor, dan proyek bangunan.</p><ul><li>Admixture: Conplast, Auramix, Auracast, Structuro, ADVA Cast, ADVA 512PP</li><li>Mould release agent: Reebol dan Reebol Emulsion</li><li>Datasheet teknis dan pendampingan penggunaan</li></ul><a class="btn" href="#kontak">Tanya produk</a></div>
       <div role="tabpanel" id="p1" aria-labelledby="t1"><h3>Precast concrete</h3><p>Elemen beton pracetak yang diproduksi sesuai gambar dan spesifikasi proyek.</p><ul><li>Produksi sesuai gambar kerja</li><li>Pengiriman ke lokasi proyek</li><li>[Sebutkan jenis produk precast Anda]</li></ul><a class="btn" href="#kontak">Minta penawaran</a></div>
       <div role="tabpanel" id="p2" aria-labelledby="t2"><h3>Aplikator beton</h3><p>Tim lapangan untuk pekerjaan aplikasi material beton dengan metode sesuai datasheet produk.</p><ul><li>Aplikasi mengikuti metode produsen</li><li>Persiapan permukaan dan pengerjaan</li><li>[Sebutkan lingkup aplikasi Anda]</li></ul><a class="btn" href="#kontak">Minta penawaran</a></div>
       <div role="tabpanel" id="p3" aria-labelledby="t3"><h3>Kontraktor beton</h3><p>Pelaksanaan pekerjaan struktur beton dari bekisting sampai serah terima.</p><ul><li>Bekisting, pembesian, dan pengecoran</li><li>Pelaksanaan oleh tim yang sama dengan pemasok material</li><li>[Sebutkan jenis proyek yang dikerjakan]</li></ul><a class="btn" href="#kontak">Minta penawaran</a></div>
@@ -401,17 +438,19 @@ details[open] p{animation:fade .4s}
 </div></section>
 
 <section id="produk" class="dk"><div class="w">
-  <h2>Produk Fosroc yang kami sediakan.</h2>
+  <h2>Produk Fosroc dan GCP yang kami sediakan.</h2>
   <p class="lead">Dari campuran beton sampai perawatan bekisting, dengan datasheet teknis untuk setiap produk.</p>
   <div class="pg">
     <div class="pc"><h3>Conplast</h3><p>Lini admixture untuk campuran beton.</p></div>
     <div class="pc"><h3>Auramix</h3><p>Lini admixture beton performa tinggi.</p></div>
     <div class="pc"><h3>Auracast</h3><p>Solusi untuk produksi beton precast.</p></div>
     <div class="pc"><h3>Structuro</h3><p>Material untuk memperkuat struktur beton.</p></div>
+    <div class="pc"><h3>ADVA Cast</h3><p>Admixture GCP untuk kuat tekan lebih tinggi, slump retention lebih baik, dan kemudahan pengerjaan pada beton cair maupun self-consolidating concrete.</p></div>
+    <div class="pc"><h3>ADVA 512PP</h3><p>Lini admixture GCP ADVA untuk campuran beton. Datasheet teknis tersedia.</p></div>
     <div class="pc hl"><h3>Reebol</h3><p>Mould release agent siap pakai. Bekisting mudah dilepas, beton tidak bernoda, aman untuk semen putih.</p><div class="chips"><span>20–60 m²/L</span><span>12 bulan</span><span>Pail 20 L · Drum 210 L</span></div></div>
     <div class="pc hl"><h3>Reebol Emulsion</h3><p>Konsentrat yang diencerkan dengan air. Permukaan beton ekspos berkualitas dengan biaya pemakaian hemat.</p><div class="chips"><span>Mulai 1 : 5–6</span><span>20–60 m²/L</span><span>3 bulan</span></div></div>
   </div>
-  <p class="note">Sumber: datasheet Fosroc Indonesia. Uji coba di lokasi disarankan untuk menentukan rasio dan cara aplikasi.</p>
+  <p class="note">Sumber: datasheet Fosroc Indonesia dan GCP. Uji coba di lokasi disarankan untuk menentukan rasio dan cara aplikasi.</p>
 </div></section>
 
 <section><div class="w">
@@ -451,7 +490,7 @@ details[open] p{animation:fade .4s}
   <div>
     <h2>Hubungi kami.</h2>
     <p class="lead">Ceritakan kebutuhan proyek Anda. Kami balas dengan penawaran atau jadwal survei.</p>
-    <dl><dt>Alamat</dt><dd>[Alamat kantor, Bandung]</dd><dt>WhatsApp / telepon</dt><dd>0812-2081-9447</dd><dt>Email</dt><dd>denidinamika26@gmail.com</dd></dl>
+    <dl><dt>Alamat</dt><dd>Jl. Bojongkoneng RT 03 RW 015, Kelurahan Sukapada, Kecamatan Cibeunying Kidul, Kota Bandung, Jawa Barat 40125, Indonesia</dd><dt>WhatsApp / telepon</dt><dd>Deni: 0812-2081-9447</dd><dt>Email</dt><dd>denidinamika26@gmail.com</dd></dl>
     <div class="row"><a class="btn" href="https://wa.me/6281220819447?text=Halo%20CV.%20Parahyangan%20Utama%20Jaya%2C%20saya%20ingin%20bertanya%20tentang%20produk%20dan%20layanan%20beton." target="_blank" rel="noopener">Chat WhatsApp</a><a class="btn o" href="mailto:denidinamika26@gmail.com">Kirim email</a></div>
   </div>
   <form id="f" novalidate>
@@ -467,7 +506,7 @@ details[open] p{animation:fade .4s}
 
 <footer><div class="w">
   <div class="fl">
-    <div><a class="logo" style="color:var(--ink)" href="#top"><i class="rl"></i>Parahyangan Utama Jaya</a><p style="max-width:34ch">Chemical beton, precast, aplikator, dan kontraktor. Distributor produk Fosroc.</p></div>
+    <div><a class="logo" style="color:var(--ink)" href="#top"><i class="rl"></i>Parahyangan Utama Jaya</a><p style="max-width:34ch">Chemical beton, precast, aplikator, dan kontraktor. Distributor produk Fosroc dan GCP.</p></div>
     <div><h4>Layanan</h4><a href="#layanan">Chemical beton</a><a href="#layanan">Precast</a><a href="#layanan">Aplikator</a><a href="#layanan">Kontraktor</a></div>
     <div><h4>Perusahaan</h4><a href="#produk">Produk</a><a href="#alur">Cara kerja</a><a href="#faq">FAQ</a><a href="#kontak">Kontak</a></div>
   </div>
@@ -511,7 +550,7 @@ function toast(t){var e=document.getElementById('toast');e.textContent=t;e.class
  /* klik untuk menyalin kontak */
  $('.cg dd').forEach(function(d){d.tabIndex=0;d.title='Klik untuk menyalin';function cp(){var t=d.textContent.trim();if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Tersalin: '+t)},function(){toast('Salin manual: '+t)});else toast('Salin manual: '+t)}d.addEventListener('click',cp);d.addEventListener('keydown',function(e){if(e.key==='Enter')cp()})});
  /* palet pencarian Ctrl/Cmd + K */
- var it=[['Beranda dan kalkulator','#beranda','hitung kebutuhan luas bekisting'],['Layanan','#layanan',''],['Distributor chemical beton','#layanan','admixture'],['Precast concrete','#layanan',''],['Aplikator beton','#layanan',''],['Kontraktor beton','#layanan',''],['Produk interior','#layanan',''],['Produk Fosroc','#produk',''],['Conplast','#produk','admixture'],['Auramix','#produk','admixture'],['Auracast','#produk','precast'],['Structuro','#produk',''],['Reebol','#produk','mould release agent'],['Reebol Emulsion','#produk','mould release agent konsentrat'],['Cara kerja','#alur',''],['Pertanyaan umum','#faq','faq pengenceran umur simpan'],['Kontak dan penawaran','#kontak','alamat email whatsapp']];
+ var it=[['Beranda dan kalkulator','#beranda','hitung kebutuhan luas bekisting'],['Layanan','#layanan',''],['Distributor chemical beton','#layanan','admixture'],['Precast concrete','#layanan',''],['Aplikator beton','#layanan',''],['Kontraktor beton','#layanan',''],['Produk interior','#layanan',''],['Produk Fosroc dan GCP','#produk',''],['Conplast','#produk','admixture'],['Auramix','#produk','admixture'],['Auracast','#produk','precast'],['Structuro','#produk',''],['ADVA Cast','#produk','admixture gcp'],['ADVA 512PP','#produk','admixture gcp'],['Reebol','#produk','mould release agent'],['Reebol Emulsion','#produk','mould release agent konsentrat'],['Cara kerja','#alur',''],['Pertanyaan umum','#faq','faq pengenceran umur simpan'],['Kontak dan penawaran','#kontak','alamat email whatsapp']];
  var ci=document.getElementById('cmd'),inp=document.getElementById('cq2'),ul=document.getElementById('cl'),on=0,list=[],last;
  function rd(){var q=inp.value.trim().toLowerCase();list=it.filter(function(z){return !q||(z[0]+' '+z[2]).toLowerCase().indexOf(q)>-1});on=Math.min(on,Math.max(list.length-1,0));ul.innerHTML=list.length?list.map(function(z,i){return '<li role="option" data-i="'+i+'" class="'+(i===on?'on':'')+'">'+z[0]+'<small>'+z[1].slice(1)+'</small></li>'}).join(''):'<li style="cursor:default">Tidak ada hasil</li>';var a=ul.querySelector('.on');if(a)a.scrollIntoView({block:'nearest'})}
  function op(){last=document.activeElement;ci.hidden=false;inp.value='';on=0;rd();inp.focus()}
